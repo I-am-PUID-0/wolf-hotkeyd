@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "wolf-hotkeyd"
+version = "0.1.0"
+description = "Controller hotkey daemon for Wolf Steam containers"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+  "evdev>=1.7,<2",
+  "PyYAML>=6,<7",
+]
+
+[project.scripts]
+wolf-hotkeyd = "wolf_hotkeyd.main:main"
+
+[tool.setuptools.packages.find]
+include = ["wolf_hotkeyd*"]
