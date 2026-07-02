@@ -7,8 +7,8 @@ from wolf_hotkeyd.actions import ActionRunner
 from wolf_hotkeyd.config import DEFAULT_CONFIG_PATH, ConfigError, load_config
 from wolf_hotkeyd.devices import (
     EvdevUnavailable,
-    format_device_capabilities,
     format_device,
+    format_device_capabilities,
     list_devices,
     listen_debug,
     listen_hotkeys,
@@ -196,7 +196,6 @@ def _print_hotkey_event(event: HotkeyEvent, *, dry_run: bool = True) -> None:
         action = event.hotkey.action or "<no action configured>"
         mode = "dry-run action" if dry_run else "action"
         print(
-            f"{prefix} triggered after {event.held_seconds:.2f}s on {device}; "
-            f"{mode}={action}",
+            f"{prefix} triggered after {event.held_seconds:.2f}s on {device}; {mode}={action}",
             flush=True,
         )

@@ -40,8 +40,7 @@ class ActionRunner:
             return
 
         print(
-            f"[wolf-hotkeyd] action {hotkey.name} starting: {action} "
-            f"timeout={hotkey.action_timeout_seconds:.2f}s",
+            f"[wolf-hotkeyd] action {hotkey.name} starting: {action} timeout={hotkey.action_timeout_seconds:.2f}s",
             flush=True,
         )
         future = self._executor.submit(_run_action, hotkey, command)

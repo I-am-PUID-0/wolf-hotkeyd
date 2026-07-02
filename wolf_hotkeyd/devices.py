@@ -3,13 +3,12 @@ from __future__ import annotations
 import glob
 import select
 import time
+from collections.abc import Callable, Iterable, Iterator
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Callable, Iterable, Iterator
 
 from wolf_hotkeyd.config import DeviceFilter
 from wolf_hotkeyd.hotkeys import HotkeyEngine, HotkeyEvent
-
 
 EVENT_GLOB = "/dev/input/event*"
 GAMEPAD_NAME_HINTS = (
@@ -274,10 +273,7 @@ def format_device_capabilities(path: str) -> list[str]:
 
         event_name = ",".join(code_names(ecodes.EV, event_type))
         code_map = _code_map_for_event_type(ecodes, event_type)
-        parts = [
-            _format_capability_value(code_map, event_type, value)
-            for value in capabilities[event_type]
-        ]
+        parts = [_format_capability_value(code_map, event_type, value) for value in capabilities[event_type]]
         lines.append(f"{event_name}: {', '.join(parts)}")
 
     return lines
@@ -314,8 +310,7 @@ def _format_debug_event(
         code_map = _code_map_for_event_type(ecodes, event.type)
         names = code_names(code_map, event.code)
         return (
-            f"[wolf-hotkeyd] {device.path} {device.name} "
-            f"{','.join(event_names)} {','.join(names)} value={event.value}"
+            f"[wolf-hotkeyd] {device.path} {device.name} {','.join(event_names)} {','.join(names)} value={event.value}"
         )
 
     return ""

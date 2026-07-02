@@ -128,7 +128,7 @@ class HotkeyEngine:
                             held_seconds=held_seconds,
                             cooldown_remaining=cooldown_until - now,
                         )
-                )
+                    )
                 continue
 
             state.fired_while_held.add(hotkey.name)

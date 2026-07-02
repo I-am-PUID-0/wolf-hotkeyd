@@ -48,17 +48,18 @@ python -m pip install -e .
 Run the lightweight verification commands:
 
 ```bash
-git diff --check
-python -m compileall wolf_hotkeyd
-python - <<'PY'
-from pathlib import Path
-from wolf_hotkeyd.config import load_config
+make bootstrap
+make verify
+```
 
-for path in sorted(Path("examples").glob("*.yaml")):
-    load_config(path, allow_missing=False)
-    print(f"loaded {path}")
-PY
-bash -n actions/*.sh deploy/steam-hotkeyd-image/*.sh
+That target checks text/EOF whitespace for tracked and untracked files,
+checks Ruff linting/formatting, compiles the Python package, loads every
+example config, runs unit tests, and validates shell script syntax.
+
+To auto-format before a commit:
+
+```bash
+make format
 ```
 
 If Docker is available and you changed the Steam runner image scaffold, also

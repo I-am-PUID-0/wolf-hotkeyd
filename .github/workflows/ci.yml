@@ -36,24 +36,7 @@ jobs:
       - name: Install package
         run: |
           python -m pip install --upgrade pip
-          python -m pip install -e .
+          python -m pip install -e .[dev]
 
-      - name: Git whitespace check
-        run: git diff-tree --check --no-commit-id --root -r HEAD
-
-      - name: Compile Python
-        run: python -m compileall wolf_hotkeyd
-
-      - name: Load example configs
-        run: |
-          python - <<'PY'
-          from pathlib import Path
-          from wolf_hotkeyd.config import load_config
-
-          for path in sorted(Path("examples").glob("*.yaml")):
-              load_config(path, allow_missing=False)
-              print(f"loaded {path}")
-          PY
-
-      - name: Shell syntax check
-        run: bash -n actions/*.sh deploy/steam-hotkeyd-image/*.sh
+      - name: Verify
+        run: make verify

@@ -23,10 +23,8 @@ Describe what you tested and how.
 
 - [ ] Not run (explain below)
 - [ ] Manual testing completed
-- [ ] `git diff --check` passed
-- [ ] `python -m compileall wolf_hotkeyd` passed
-- [ ] Example configs load successfully
-- [ ] `bash -n actions/*.sh deploy/steam-hotkeyd-image/*.sh` passed
+- [ ] `make verify` passed
+- [ ] `make format` run, if Python formatting changed
 - [ ] Docker image build tested, if image files changed
 
 ## Related Issues

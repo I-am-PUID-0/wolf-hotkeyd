@@ -4,7 +4,6 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
-
 DEFAULT_CONFIG_PATH = Path("/etc/wolf-hotkeyd/config.yaml")
 
 
@@ -62,7 +61,7 @@ def parse_config(raw: dict[str, Any]) -> WolfHotkeyConfig:
     if not isinstance(devices_raw, dict):
         raise ConfigError("devices must be a mapping")
 
-    hotkeys_raw = raw.get("hotkeys") or ()
+    hotkeys_raw = raw.get("hotkeys") or []
     if not isinstance(hotkeys_raw, list):
         raise ConfigError("hotkeys must be a list")
 
