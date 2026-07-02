@@ -1,0 +1,20 @@
+poll_interval: 0.05
+rescan_interval_seconds: 2.0
+
+devices:
+  include:
+    - gamepad
+  exclude: []
+
+hotkeys:
+  - name: force_close_game
+    description: Host-side force-close action for the active Wolf Steam container
+    buttons:
+      - BTN_TL
+      - BTN_TR
+      - BTN_THUMBL
+      - BTN_THUMBR
+    hold_time_seconds: 2.0
+    cooldown_seconds: 5.0
+    action_timeout_seconds: 30.0
+    action: /opt/wolf-hotkeyd/actions/host-force-close-game.sh

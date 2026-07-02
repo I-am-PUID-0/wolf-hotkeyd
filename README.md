@@ -41,6 +41,17 @@ WOLF_HOTKEYD_ENABLED=0
 For anti-cheat titles, a conservative setup is to keep a separate Steam app
 runner/image without `wolf-hotkeyd` enabled.
 
+## Host-Side Mode
+
+Host-side mode runs the hotkey listener on the Docker/Wolf host instead of
+inside the Steam container. When the combo triggers, the host action finds the
+active Wolf Steam container and executes the force-close helper inside it only
+for that recovery action.
+
+This reduces resident tooling inside the game container, but it is still not an
+anti-cheat guarantee. See [Host-Side Mode](docs/host-side-mode.md) for setup,
+validation, and caveats.
+
 ## Recovery Combo
 
 The default recovery combo is:
