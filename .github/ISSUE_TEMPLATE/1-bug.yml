@@ -1,0 +1,127 @@
+name: Bug report
+description: Report a wolf-hotkeyd bug so it can be reproduced and fixed.
+title: "[BUG] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this form for defects in wolf-hotkeyd itself.
+
+        For vulnerabilities, do not open a public issue. Use the Security tab for private reporting.
+  - type: checkboxes
+    id: duplicate-check
+    attributes:
+      label: Duplicate check
+      options:
+        - label: I searched existing issues and did not find a matching report.
+          required: true
+  - type: checkboxes
+    id: preflight
+    attributes:
+      label: Before submitting, I have
+      options:
+        - label: Reviewed the README and relevant docs.
+          required: true
+        - label: Re-tested on the latest applicable release, image tag, or branch head.
+          required: true
+        - label: Collected logs or enough detail to help reproduce the issue.
+          required: true
+        - label: Removed secrets, hostnames, account details, and local-only identifiers from pasted output.
+          required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Which area is affected?
+      multiple: false
+      options:
+        - Controller/input detection
+        - Hotkey hold/cooldown logic
+        - Action execution
+        - Force-close process selection
+        - Host-side mode
+        - Steam runner image
+        - Capture/debug scripts
+        - Documentation
+        - Other / unsure
+    validations:
+      required: true
+  - type: textarea
+    id: behavior
+    attributes:
+      label: What happened?
+      description: Describe the actual behavior. Include the expected behavior if that makes the problem clearer.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      description: Provide a minimal, reliable set of steps so the issue can be reproduced.
+      placeholder: |
+        1. Start ...
+        2. Run ...
+        3. Press ...
+        4. Observe ...
+    validations:
+      required: true
+  - type: dropdown
+    id: deployment
+    attributes:
+      label: How are you running wolf-hotkeyd?
+      multiple: false
+      options:
+        - Custom Wolf Steam runner image
+        - Manual copy inside Steam container
+        - Host-side mode on Docker/Wolf host
+        - Local source checkout
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: wolf-hotkeyd version / image tag / branch marker
+      description: Include the exact version you are running.
+      placeholder: 0.1.0
+    validations:
+      required: true
+  - type: input
+    id: host-os
+    attributes:
+      label: Host OS / platform
+      description: Include your host OS and version.
+      placeholder: Ubuntu 24.04
+    validations:
+      required: true
+  - type: input
+    id: client
+    attributes:
+      label: Client/controller
+      description: Include the Moonlight client and controller type, if relevant.
+      placeholder: Steam Deck / Xbox controller / DualSense
+    validations:
+      required: false
+  - type: textarea
+    id: config
+    attributes:
+      label: Relevant config
+      description: Paste only the relevant configuration, sanitized of secrets and local-only values.
+      render: yaml
+    validations:
+      required: false
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant log output
+      description: Paste logs, trace snippets, or error output that help explain the failure. Remove secrets first.
+      render: shell
+    validations:
+      required: false
+  - type: textarea
+    id: extra
+    attributes:
+      label: Additional context
+      description: Add screenshots, links, or workaround notes that narrow the issue.
+    validations:
+      required: false

@@ -7,7 +7,21 @@ name = "wolf-hotkeyd"
 version = "0.1.0"
 description = "Controller hotkey daemon for Wolf Steam containers"
 readme = "README.md"
+license = { file = "LICENSE" }
 requires-python = ">=3.11"
+keywords = ["wolf", "moonlight", "steam", "controller", "hotkey", "evdev"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Environment :: Console",
+  "Intended Audience :: End Users/Desktop",
+  "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
+  "Operating System :: POSIX :: Linux",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: System :: Systems Administration",
+]
 dependencies = [
   "evdev>=1.7,<2",
   "PyYAML>=6,<7",

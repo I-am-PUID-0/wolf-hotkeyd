@@ -72,11 +72,21 @@ control and can remove the virtual input devices.
 ```bash
 python3 -m venv .venv
 . .venv/bin/activate
-pip install -e .
+python -m pip install --upgrade pip
+python -m pip install -e .
 ```
 
 The daemon requires Linux input devices and the `evdev` package. It is expected
 to run inside a Wolf Steam container with `/dev/input` mounted.
+
+## Project Docs
+
+- [Controller Mapping](docs/controller-mapping.md)
+- [Host-Side Mode](docs/host-side-mode.md)
+- [Contributing](CONTRIBUTING.md)
+- [Security Policy](SECURITY.md)
+- [Code of Conduct](CODE_OF_CONDUCT.md)
+- [Changelog](CHANGELOG.md)
 
 ## Manual Container Install
 

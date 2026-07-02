@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Documentation
+    url: https://github.com/I-am-PUID-0/wolf-hotkeyd/tree/main/docs
+    about: Check the docs and README before filing an issue.
+  - name: Security Reports
+    url: https://github.com/I-am-PUID-0/wolf-hotkeyd/security/policy
+    about: Do not file public issues for vulnerabilities. Use the Security tab for private reporting.
