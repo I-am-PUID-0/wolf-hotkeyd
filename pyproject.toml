@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "wolf-hotkeyd"
-version = "0.2.0"
+version = "0.3.0"
 description = "Controller hotkey daemon for Wolf Steam containers"
 readme = "README.md"
 license = { file = "LICENSE" }

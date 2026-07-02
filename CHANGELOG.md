@@ -6,6 +6,13 @@ This project uses [Release Please](https://github.com/googleapis/release-please)
 and [Conventional Commits](https://www.conventionalcommits.org/) to prepare
 release notes.
 
+## [0.3.0](https://github.com/I-am-PUID-0/wolf-hotkeyd/compare/wolf-hotkeyd-0.2.0...wolf-hotkeyd-0.3.0) (2026-07-02)
+
+
+### Features
+
+* add guided capture workflows and release image tags ([58bcef7](https://github.com/I-am-PUID-0/wolf-hotkeyd/commit/58bcef7dfcb4e17c9e5b041b744e5dee2ed021cd))
+
 ## [0.2.0](https://github.com/I-am-PUID-0/wolf-hotkeyd/compare/wolf-hotkeyd-0.1.0...wolf-hotkeyd-0.2.0) (2026-07-02)
 
 
