@@ -2,6 +2,20 @@ name: Docker Image
 
 on:
   workflow_dispatch:
+    inputs:
+      version:
+        description: "Optional image version tag to publish, for example 0.2.0"
+        required: false
+        type: string
+      latest:
+        description: "Also publish/update the latest tag"
+        required: false
+        default: false
+        type: boolean
+      source_ref:
+        description: "Optional git ref to build, for example wolf-hotkeyd-0.2.0"
+        required: false
+        type: string
   release:
     types:
       - published
@@ -17,6 +31,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.source_ref || github.ref }}
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
@@ -41,7 +57,9 @@ jobs:
           images: ghcr.io/${{ steps.image.outputs.owner }}/wolf-steam-hotkeyd
           tags: |
             type=raw,value=latest,enable=${{ github.event_name == 'release' && !github.event.release.prerelease }}
-            type=semver,pattern={{version}},enable=${{ github.event_name == 'release' }}
+            type=raw,value=latest,enable=${{ github.event_name == 'workflow_dispatch' && inputs.latest }}
+            type=match,pattern=^wolf-hotkeyd-(.*)$,group=1,value=${{ github.event.release.tag_name }},enable=${{ github.event_name == 'release' }}
+            type=raw,value=${{ inputs.version }},enable=${{ github.event_name == 'workflow_dispatch' && inputs.version != '' }}
             type=sha,prefix=sha-
 
       - name: Build and push image

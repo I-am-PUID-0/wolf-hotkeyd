@@ -6,6 +6,16 @@ Use debug mode to record the button names exposed by each controller mode.
 wolf-hotkeyd --listen-debug
 ```
 
+For contribution-quality captures, use the guided walkthrough:
+
+```bash
+/opt/wolf-hotkeyd/actions/capture-controller-input.sh "Controller layout name"
+```
+
+The walkthrough prompts for each expected control, records event output when
+available, allows custom controls and manual notes, and prints GitHub issue
+submission instructions when complete.
+
 Expected buttons for the default recovery combo:
 
 | Control | Common Linux input name |

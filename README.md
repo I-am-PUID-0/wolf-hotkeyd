@@ -83,6 +83,7 @@ to run inside a Wolf Steam container with `/dev/input` mounted.
 
 - [Controller Mapping](docs/controller-mapping.md)
 - [Host-Side Mode](docs/host-side-mode.md)
+- [Steam Runner Image](docs/steam-runner-image.md)
 - [Contributing](CONTRIBUTING.md)
 - [Security Policy](SECURITY.md)
 - [Code of Conduct](CODE_OF_CONDUCT.md)
@@ -126,8 +127,37 @@ ls -lah /opt/wolf-hotkeyd/wolf-hotkeyd
 
 ## Automatic Steam Container Install
 
-For normal use, build a custom Steam runner image so every new Steam container
+For normal use, use a custom Steam runner image so every new Steam container
 created by Wolf already includes `wolf-hotkeyd` and its Python dependencies.
+
+The published image is available from GitHub Container Registry:
+
+```text
+ghcr.io/i-am-puid-0/wolf-steam-hotkeyd:latest
+```
+
+Pin a release when you want repeatable rollout behavior:
+
+```text
+ghcr.io/i-am-puid-0/wolf-steam-hotkeyd:0.2.0
+```
+
+Then update the Steam app runner image in Wolf Den, Wolf UI, or the Wolf app
+configuration from:
+
+```text
+ghcr.io/games-on-whales/steam:edge
+```
+
+to the published `wolf-steam-hotkeyd` image.
+
+See [Steam Runner Image](docs/steam-runner-image.md) for tags, manual
+backfills, local builds, and verification.
+
+### Local Image Build
+
+Build locally when developing changes or when you want a private image instead
+of the published GitHub Container Registry image.
 
 Build on the Docker host from the repository root:
 
@@ -138,8 +168,7 @@ docker build \
   .
 ```
 
-Then update the Steam app runner image in Wolf Den, Wolf UI, or the Wolf app
-configuration from:
+Then update the Steam app runner image from:
 
 ```text
 ghcr.io/games-on-whales/steam:edge
@@ -355,23 +384,31 @@ Use this while testing additional games:
 
 1. Start the game from Steam Big Picture.
 2. Wait until the main menu or gameplay is loaded.
-3. Run:
+3. Run the guided capture:
 
 ```bash
 /opt/wolf-hotkeyd/actions/capture-game-processes.sh "Game Name"
 ```
 
-The script writes a timestamped log under `/tmp/wolf-hotkeyd-captures/` by
-default and prints the path. To store logs somewhere else:
+The script walks through game context prompts, captures input-device context,
+records the Steam/Proton process tree, runs `force-close-game.sh --dry-run`,
+and asks whether the selected process was correct. You can capture additional
+snapshots after launchers, menus, gameplay, or crash handlers appear.
+
+It writes a timestamped log under `/tmp/wolf-hotkeyd-captures/` by default and
+prints the path. To store logs somewhere else:
 
 ```bash
 WOLF_HOTKEYD_CAPTURE_DIR=/tmp/wolf-captures /opt/wolf-hotkeyd/actions/capture-game-processes.sh "Game Name"
 ```
 
-Each capture includes input-device context, the Steam/Proton process tree, and a
-`force-close-game.sh --dry-run` candidate selection. Send back the printed log
-path or the file contents for any game where the selected PID does not look like
-the real game process.
+Before sharing a capture, review and remove secrets, account names, hostnames,
+container IDs, local paths, or unrelated process output. Then open a GitHub
+issue and attach the sanitized log or paste the relevant dry-run section:
+
+```text
+https://github.com/I-am-PUID-0/wolf-hotkeyd/issues/new/choose
+```
 
 Retrieve captures from the Steam container with:
 
@@ -388,22 +425,32 @@ collecting evidence for missing/duplicated inputs:
 /opt/wolf-hotkeyd/actions/capture-controller-input.sh "Steam Deck default layout"
 ```
 
-The script prompts for:
+The script is an interactive walkthrough. It prompts for one control at a time,
+opens a short capture window, records any available event output, lets you add
+notes for that control, and then moves to the next input.
 
-- pre-capture notes
-- whether to include all devices
-- whether to include raw event types
-- whether to include noisy stick axes
-- capture duration
-- post-capture notes
+Built-in prompts include face buttons, bumpers, triggers, D-pad, Start/Select,
+stick clicks, Guide/Home, stick movement, and Steam Deck rear buttons. At the
+end, you can add custom controls or combos and write manual observations for
+inputs that do not emit visible events.
 
 It writes a timestamped log under `/tmp/wolf-hotkeyd-input-captures/` by
-default. To use a different directory or default duration:
+default. To use a different directory or default capture timing:
 
 ```bash
 WOLF_HOTKEYD_INPUT_CAPTURE_DIR=/tmp/controller-captures \
+WOLF_HOTKEYD_INPUT_STEP_SECONDS=8 \
 WOLF_HOTKEYD_INPUT_CAPTURE_SECONDS=60 \
 /opt/wolf-hotkeyd/actions/capture-controller-input.sh "Steam Deck default layout"
+```
+
+Before sharing a capture, review and remove secrets, account names, hostnames,
+container IDs, local paths, or unrelated process output. Then open a GitHub
+issue and attach the sanitized log or paste the relevant control sections so
+the mapping can be incorporated:
+
+```text
+https://github.com/I-am-PUID-0/wolf-hotkeyd/issues/new/choose
 ```
 
 Retrieve controller captures with:
