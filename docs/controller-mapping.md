@@ -1,7 +1,6 @@
 # Controller Mapping
 
-Use phase 1 debug mode to record the button names exposed by each controller
-mode.
+Use debug mode to record the button names exposed by each controller mode.
 
 ```bash
 wolf-hotkeyd --listen-debug
@@ -57,8 +56,8 @@ Do not use `Minus / Select + Plus / Start + LB + RB` for daemon recovery. In the
 observed Steam Deck plus Moonlight flow, that chord is already handled by
 Wolf/Moonlight session control and removes the virtual input devices.
 
-The phase-2 recovery combo should avoid Start/Select and use controls confirmed
-as normal `EV_KEY` events:
+The recovery combo should avoid Start/Select and use controls confirmed as
+normal `EV_KEY` events:
 
 ```text
 LB + RB + left stick press + right stick press

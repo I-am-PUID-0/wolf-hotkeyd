@@ -1,47 +1,60 @@
 # wolf-hotkeyd
 
-`wolf-hotkeyd` is a small Python companion daemon for Wolf Steam containers. It
-starts with controller discovery and debug logging so controller button names can
-be mapped before any recovery actions are wired in.
+`wolf-hotkeyd` is a small controller hotkey daemon for
+[Games on Whales Wolf](https://github.com/games-on-whales/wolf) Steam runner
+containers.
 
-Phase 1 includes:
+It listens to Linux input events from Wolf's virtual gamepad and can run a
+configured recovery action when a controller chord is held. The included
+recovery action is designed to close the active Steam/Proton game process while
+leaving Steam Big Picture, Wolf, and the Moonlight stream alive.
 
-- YAML config loading with sensible defaults.
-- `/dev/input/event*` discovery.
-- Gamepad-oriented device filtering.
-- `wolf-hotkeyd --list-devices`.
-- `wolf-hotkeyd --listen-debug`.
+## Features
 
-Phase 2 includes dry-run hotkey detection:
+- Lists and filters `/dev/input/event*` devices.
+- Prints controller debug events for mapping buttons and axes.
+- Detects multi-button controller hotkeys with hold time and cooldown.
+- Supports dry-run mode before executing actions.
+- Runs action scripts with timeout and captured stdout/stderr logging.
+- Includes process-capture helpers for tuning game process selection.
+- Includes a custom Steam runner image scaffold that auto-starts the daemon in
+  each Wolf-created Steam container.
 
-- Per-device pressed-button tracking.
-- Configured multi-button combos.
-- Hold-time detection.
-- Cooldown handling.
-- Trigger logging without action execution.
+## Anti-Cheat Warning
 
-Phase 3 adds action execution:
+`wolf-hotkeyd` reads `/dev/input/event*` and keeps a background process running
+inside the Steam container. Some anti-cheat systems may classify any input
+listener, process scanner, overlay, debugger, or helper daemon as suspicious.
 
-- `wolf-hotkeyd --run-actions`.
-- Threaded script execution so input polling can continue.
-- Timeout handling.
-- Captured stdout/stderr/exit-code logging.
+Do not run this daemon in anti-cheat-protected multiplayer modes unless you are
+comfortable with that risk. If a game warns about an input logger or suspicious
+background process, treat `wolf-hotkeyd` as a likely contributor and disable it
+for that game/container.
 
-The sample config still runs only a harmless test action.
+For the custom Steam image, disable auto-start with a runner environment
+variable:
 
-Phase 4 adds force-close helpers:
+```text
+WOLF_HOTKEYD_ENABLED=0
+```
 
-- `actions/capture-controller-input.sh` walks through controller input capture
-  with notes.
-- `actions/capture-game-processes.sh` collects repeatable per-game evidence.
-- `actions/debug-process-tree.sh` captures Steam/Proton process evidence.
-- `actions/force-close-game.sh --dry-run` shows the selected game candidate.
-- `actions/force-close-game.sh` sends TERM, waits, then sends KILL to the
-  selected process tree.
-- `deploy/steam-hotkeyd-image/` builds a custom Steam runner image that starts
-  the daemon automatically for every Wolf-created Steam container.
-- `examples/config.force-close.yaml` is the opt-in hotkey config for the real
-  force-close action.
+For anti-cheat titles, a conservative setup is to keep a separate Steam app
+runner/image without `wolf-hotkeyd` enabled.
+
+## Recovery Combo
+
+The default recovery combo is:
+
+```text
+LB + RB + left stick press + right stick press
+BTN_TL + BTN_TR + BTN_THUMBL + BTN_THUMBR
+```
+
+It is configured with a two-second hold and five-second cooldown.
+
+Avoid using `Start + Select + LB + RB` for this daemon. In common
+Moonlight/Wolf controller flows that chord may already be reserved for session
+control and can remove the virtual input devices.
 
 ## Install For Development
 
@@ -54,17 +67,17 @@ pip install -e .
 The daemon requires Linux input devices and the `evdev` package. It is expected
 to run inside a Wolf Steam container with `/dev/input` mounted.
 
-## Copied Container Install
+## Manual Container Install
 
-When the project is copied into a Wolf Steam container at `/opt/wolf-hotkeyd`,
-install the container-side Python dependencies once per fresh container:
+Manual copying is useful while developing or debugging. Copy the project into a
+Steam container at `/opt/wolf-hotkeyd`, then install container-side Python
+dependencies once:
 
 ```bash
 /opt/wolf-hotkeyd/actions/install-container-deps.sh
 ```
 
-Then run the daemon with `PYTHONPATH` instead of the `wolf-hotkeyd` console
-script:
+Run the copied tree with `PYTHONPATH`:
 
 ```bash
 PYTHONPATH=/opt/wolf-hotkeyd python3 -m wolf_hotkeyd --list-devices
@@ -74,16 +87,16 @@ PYTHONPATH=/opt/wolf-hotkeyd python3 -m wolf_hotkeyd \
   --run-actions
 ```
 
-From the TrueNAS host, avoid nested copies by clearing the old target and
-copying the staged directory contents:
+From the Docker host, avoid nested `docker cp` copies by clearing the old target
+and copying the staged directory contents:
 
 ```bash
 docker exec "$CONTAINER" rm -rf /opt/wolf-hotkeyd
 docker exec "$CONTAINER" mkdir -p /opt/wolf-hotkeyd
-docker cp /mnt/Storage_Pool/Docker/wolf-hotkeyd/. "$CONTAINER":/opt/wolf-hotkeyd/
+docker cp /path/to/wolf-hotkeyd/. "$CONTAINER":/opt/wolf-hotkeyd/
 ```
 
-If the path is missing after a copy, check for an accidental nested directory:
+If a copied path is missing, check for an accidental nested directory:
 
 ```bash
 ls -lah /opt/wolf-hotkeyd
@@ -95,17 +108,17 @@ ls -lah /opt/wolf-hotkeyd/wolf-hotkeyd
 For normal use, build a custom Steam runner image so every new Steam container
 created by Wolf already includes `wolf-hotkeyd` and its Python dependencies.
 
-Build on the Docker host:
+Build on the Docker host from the repository root:
 
 ```bash
-cd /mnt/Storage_Pool/Docker/wolf-hotkeyd
 docker build \
   -f deploy/steam-hotkeyd-image/Dockerfile \
   -t wolf-steam-hotkeyd:latest \
   .
 ```
 
-Then update the Steam app runner image in Wolf Den / Wolf UI from:
+Then update the Steam app runner image in Wolf Den, Wolf UI, or the Wolf app
+configuration from:
 
 ```text
 ghcr.io/games-on-whales/steam:edge
@@ -143,15 +156,7 @@ docker exec "$CONTAINER" tail -n 80 /var/log/wolf-hotkeyd.log
 
 If multiple Steam apps or profiles exist, update each Steam app runner image.
 
-Confirmed behavior:
-
-- A fresh Wolf Steam container using `wolf-steam-hotkeyd:latest` auto-started
-  `python3 -m wolf_hotkeyd`.
-- The daemon used `/opt/wolf-hotkeyd/examples/config.force-close.yaml`.
-- It detected the Wolf virtual controller and listened on `/dev/input/event*`
-  without a manual copy/install/run step.
-
-## Usage
+## CLI Usage
 
 List visible input devices:
 
@@ -159,16 +164,16 @@ List visible input devices:
 wolf-hotkeyd --list-devices
 ```
 
+Show advertised capabilities for each event device:
+
+```bash
+wolf-hotkeyd --list-devices --show-capabilities
+```
+
 Listen for gamepad button and axis events:
 
 ```bash
 wolf-hotkeyd --listen-debug
-```
-
-Use a custom config:
-
-```bash
-wolf-hotkeyd --config ./examples/config.yaml --listen-debug
 ```
 
 Include keyboard and mouse devices while debugging:
@@ -190,12 +195,6 @@ produce a continuous stream. Include them only when deliberately mapping sticks:
 wolf-hotkeyd --listen-debug --include-sticks
 ```
 
-Show advertised capabilities for each event device:
-
-```bash
-wolf-hotkeyd --list-devices --show-capabilities
-```
-
 Detect configured hotkeys without running actions:
 
 ```bash
@@ -208,7 +207,7 @@ Run configured hotkey actions:
 wolf-hotkeyd --config ./examples/config.yaml --run-actions
 ```
 
-Run the real force-close config:
+Run the force-close config:
 
 ```bash
 wolf-hotkeyd --config ./examples/config.force-close.yaml --run-actions
@@ -218,7 +217,7 @@ wolf-hotkeyd --config ./examples/config.force-close.yaml --run-actions
 
 The Steam container needs read access to `/dev/input/event*`. Depending on the
 container user and device permissions, this may require running as root, adding
-the user to the input group, or adjusting the compose/device configuration.
+the user to the input group, or adjusting the runner/device configuration.
 
 Example volume/devices shape:
 
@@ -264,23 +263,13 @@ and sticks.
 
 ## Dry-Run Hotkey Test
 
-The default recovery hotkey in `examples/config.yaml` is:
+Run:
 
-```text
-BTN_TL + BTN_TR + BTN_THUMBL + BTN_THUMBR
+```bash
+wolf-hotkeyd --config ./examples/config.yaml --dry-run
 ```
 
-On the observed Wolf virtual controller this maps to:
-
-```text
-LB + RB + left stick press + right stick press
-```
-
-Do not use `Plus / Start + Minus / Select + LB + RB` for the daemon. In the
-observed Steam Deck plus Moonlight flow, that combo is already handled by
-Wolf/Moonlight session control and removes the virtual input devices.
-
-Hold the combo for two seconds while dry-run mode is active. Expected output:
+Hold the recovery combo for two seconds. Expected output:
 
 ```text
 [wolf-hotkeyd] hotkey force_close_game armed on /dev/input/event11 Wolf X-Box One (virtual) pad
@@ -289,7 +278,7 @@ Hold the combo for two seconds while dry-run mode is active. Expected output:
 
 ## Action Test
 
-The example config points at a harmless test action:
+The safe example config points at:
 
 ```text
 /opt/wolf-hotkeyd/actions/test-action.sh
@@ -319,15 +308,15 @@ Review the selected candidate. It should be a game or game child process, not
 Steam, `steamwebhelper`, `wineserver`, `services.exe`, `explorer.exe`, or
 pressure-vessel helper processes.
 
-The selector prints scored candidates and prefers game executables under
-Steam library paths such as `steamapps/common` or `S:\common`, especially
+The selector prints scored candidates and prefers game executables under Steam
+library paths such as `steamapps/common` or `S:\common`, especially
 Win64/shipping binaries. It penalizes Wine/Proton/system helpers such as
 `steam.exe`, `winedevice.exe`, `svchost.exe`, `rpcss.exe`, `tabtip.exe`, and
 pressure-vessel wrappers. It also penalizes crash-reporting/upload sidecars
 such as `crs-handler.exe`, crash recorder processes, metrics uploaders, and
 `CRS` helper directories so those do not outrank the main game executable.
 
-After the dry-run candidate looks correct, run the opt-in force-close config:
+After the dry-run candidate looks correct, run the force-close config:
 
 ```bash
 PYTHONPATH=/opt/wolf-hotkeyd python3 -m wolf_hotkeyd \
@@ -363,15 +352,7 @@ Each capture includes input-device context, the Steam/Proton process tree, and a
 path or the file contents for any game where the selected PID does not look like
 the real game process.
 
-Observed captures:
-
-- Assetto Corsa Competizione selected the real Win64 shipping executable.
-- Halo: The Master Chief Collection selected `MCC-Win64-Shipping.exe`.
-- Horizon Zero Dawn Remastered initially selected a `CRS` crash-report helper;
-  after adding crash/upload sidecar penalties, dry-run selected the main
-  `HorizonZeroDawnRemastered.exe` process.
-
-From the TrueNAS host, retrieve a capture from the Steam container with:
+Retrieve captures from the Steam container with:
 
 ```bash
 docker cp "$CONTAINER":/tmp/wolf-hotkeyd-captures ./wolf-hotkeyd-captures
@@ -404,7 +385,7 @@ WOLF_HOTKEYD_INPUT_CAPTURE_SECONDS=60 \
 /opt/wolf-hotkeyd/actions/capture-controller-input.sh "Steam Deck default layout"
 ```
 
-From the TrueNAS host, retrieve controller captures with:
+Retrieve controller captures with:
 
 ```bash
 docker cp "$CONTAINER":/tmp/wolf-hotkeyd-input-captures ./wolf-hotkeyd-input-captures

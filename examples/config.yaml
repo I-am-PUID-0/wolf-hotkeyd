@@ -8,7 +8,7 @@ devices:
 
 hotkeys:
   - name: force_close_game
-    description: Phase 3 test action for the future force-close recovery combo
+    description: Safe test action for the force-close recovery combo
     buttons:
       - BTN_TL
       - BTN_TR
