@@ -19,7 +19,7 @@ submission instructions when complete.
 Expected buttons for the default recovery combo:
 
 | Control | Common Linux input name |
-|---|---|
+| --- | --- |
 | Start | `BTN_START` |
 | Select / Back | `BTN_SELECT` |
 | L1 | `BTN_TL` |
@@ -40,7 +40,7 @@ Wolf X-Box One (virtual) pad
 ```
 
 | Control | Event |
-|---|---|
+| --- | --- |
 | A | `EV_KEY BTN_A,BTN_GAMEPAD,BTN_SOUTH` |
 | B | `EV_KEY BTN_B,BTN_EAST` |
 | X | `EV_KEY BTN_NORTH,BTN_X` |
@@ -80,7 +80,7 @@ Avoid controller chords that Moonlight clients may already reserve before input
 reaches Wolf or the Steam container:
 
 | Shortcut | Known use |
-|---|---|
+| --- | --- |
 | Start + Select + L1 + R1 | Quit Moonlight streaming session |
 | Start | Open Moonlight settings UI when not streaming |
 | Start hold | Toggle Moonlight mouse mode |
@@ -97,28 +97,29 @@ layer in its public quickstart/docs. Treat Wolf as the transport and virtual
 input producer, then verify real behavior with the guided capture script for
 the exact Moonlight client, controller, and Steam Input profile being used.
 
-Steam and Steam Input add another reservation layer after the input reaches the
-Steam container. Steam's global **Guide Button Chord Configuration** performs
-actions while holding the controller's Guide/Steam/Home button. Valve documents
-this as a special global layout for Guide-button chords, separate from Big
-Picture and Desktop configurations.
+Steam and Steam Input can add another reservation layer after the input reaches
+the Steam container. Steam's global **Guide Button Chord Configuration**
+performs actions while holding the controller's Guide/Steam/Home button. Valve
+documents this as a special global layout for Guide-button chords, separate
+from Big Picture and Desktop configurations.
 
 Avoid `Guide`/`Steam`/`Home` based daemon combos. Depending on controller,
-client, and Steam Input profile, these chords may be consumed by Steam before a
+client, platform, and Steam Input profile, these chords may be consumed before a
 game sees them:
 
 | Shortcut family | Common Steam / Steam Deck use |
-|---|---|
+| --- | --- |
 | Guide / Steam button | Open Steam overlay, menu, or Big Picture focus |
 | Guide + Start | Alt-Tab on Steam Controller chord layouts |
 | Guide + Back / Select | Open on-screen keyboard on Steam Controller chord layouts |
-| Guide + R1 | Screenshot on Steam Controller / Steam Deck style layouts |
-| Guide + L1 | Magnifier on Steam Controller / Steam Deck style layouts |
-| Guide + X | On-screen keyboard on Steam Deck |
-| Guide + B long press | Force game shutdown on Steam Deck |
-| Guide + L2 / R2 | Mouse clicks on Steam Controller / Steam Deck style layouts |
-| Guide + right stick / trackpad | Mouse cursor on Steam Controller / Steam Deck style layouts |
-| Guide + left stick up/down | Volume or brightness changes depending on platform/layout |
+| Guide + R1 | Screenshot on Steam Controller chord layouts or Steam Deck |
+| Guide + L1 | Magnifier on Steam Controller chord layouts or Steam Deck |
+| Steam + X | On-screen keyboard on Steam Deck |
+| Steam + B long press | Force game shutdown on Steam Deck |
+| Guide + L2 / R2 | Mouse clicks on Steam Controller chord layouts or Steam Deck |
+| Guide + right stick / trackpad | Mouse cursor on Steam Controller chord layouts or Steam Deck |
+| Steam + left stick up/down | Brightness changes on Steam Deck |
+| Steam + D-pad up/down | Volume changes on Steam Deck |
 | Guide + Y | Turn off controller on Steam Controller chord layouts |
 
 Steam Input can also add game-specific action sets, layers, and button chords.
@@ -129,8 +130,8 @@ unchanged in the target profile.
 
 References:
 
-- Moonlight setup guide: https://github.com/moonlight-stream/moonlight-docs/wiki/Setup-Guide
-- Games on Whales Wolf quickstart: https://games-on-whales.github.io/wolf/stable/user/quickstart.html
-- Batocera Moonlight shortcut summary: https://wiki.batocera.org/systems:moonlight
-- Steamworks Steam Input player guide: https://partner.steamgames.com/doc/features/steam_controller/getting_started_for_players
-- Steam Controller community FAQ: https://www.reddit.com/r/SteamController/wiki/index/
+- [Moonlight setup guide](https://github.com/moonlight-stream/moonlight-docs/wiki/Setup-Guide)
+- [Games on Whales Wolf quickstart](https://games-on-whales.github.io/wolf/stable/user/quickstart.html)
+- [Batocera Moonlight shortcut summary](https://wiki.batocera.org/systems:moonlight)
+- [Steamworks Steam Input player guide](https://partner.steamgames.com/doc/features/steam_controller/getting_started_for_players)
+- [Steam Controller community FAQ](https://www.reddit.com/r/SteamController/wiki/index/)
