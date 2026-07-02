@@ -6,6 +6,13 @@ This project uses [Release Please](https://github.com/googleapis/release-please)
 and [Conventional Commits](https://www.conventionalcommits.org/) to prepare
 release notes.
 
+## [0.3.1](https://github.com/I-am-PUID-0/wolf-hotkeyd/compare/wolf-hotkeyd-0.3.0...wolf-hotkeyd-0.3.1) (2026-07-02)
+
+
+### Documentation
+
+* document reserved upstream shortcuts and controller chord conflicts ([6b90fcb](https://github.com/I-am-PUID-0/wolf-hotkeyd/commit/6b90fcb6c47deb4d68f5355b169293105f7be010))
+
 ## [0.3.0](https://github.com/I-am-PUID-0/wolf-hotkeyd/compare/wolf-hotkeyd-0.2.0...wolf-hotkeyd-0.3.0) (2026-07-02)
 
 
